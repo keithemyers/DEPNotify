@@ -931,20 +931,20 @@ else
   fi
 fi
 
-btenforce_status=$( launchctl print system/com.itech.btenforce | grep 'last exit code' | awk '{ print $5 }' )
-if [[ "$btenforce_status" == "0" ]]; then
-  echo "Status: ✅ Student Bluetooth enforcement is enabled." >> "$DEP_NOTIFY_LOG"
-  echo -e "[✅] Student Bluetooth enforcement is enabled." >> "$task_file"
+btenforce_status=$( launchctl list | grep itech | awk '{ print $3 }' )
+if [[ "$btenforce_status" == "com.itech.btenforce" ]]; then
+  echo "Status: ✅ Student Bluetooth enforcement is loaded." >> "$DEP_NOTIFY_LOG"
+  echo -e "[✅] Student Bluetooth enforcement is loaded." >> "$task_file"
 else
   "$JAMF_BINARY" policy -event install-btenforce
   sleep 2
-  btenforce_status=$( launchctl print system/com.itech.btenforce | grep 'last exit code' | awk '{ print $5 }' )
-  if [[ "$btenforce_status" == "0" ]]; then
-    echo "Status: ✅ Student Bluetooth enforcement is enabled." >> "$DEP_NOTIFY_LOG"
-    echo -e "[✅] Student Bluetooth enforcement is enabled after second try." >> "$task_file"
+  btenforce_status=$( launchctl list | grep itech | awk '{ print $3 }' )
+  if [[ "$btenforce_status" == "com.itech.btenforce" ]]; then
+    echo "Status: ✅ Student Bluetooth enforcement is loaded." >> "$DEP_NOTIFY_LOG"
+    echo -e "[✅] Student Bluetooth enforcement is loaded after second try." >> "$task_file"
   else
-    echo "Status: ❌ Student Bluetooth enforcement is NOT enabled." >> "$DEP_NOTIFY_LOG"
-    echo -e "[❌] Student Bluetooth enforcement is NOT enabled after second try." >> "$task_file"
+    echo "Status: ❌ Student Bluetooth enforcement is NOT loaded." >> "$DEP_NOTIFY_LOG"
+    echo -e "[❌] Student Bluetooth enforcement is NOT loaded after second try." >> "$task_file"
   fi
 fi
 
@@ -966,6 +966,8 @@ else
     echo -e "[❌] Enrollment receipt not found" >> "$task_file"
   fi
 fi
+
+echo -e "\n\n" >> "$task_file"
 
 echo "Status: Generating checklist. Restarting the computer in 5 seconds..." >> "$DEP_NOTIFY_LOG"
 sleep 5
