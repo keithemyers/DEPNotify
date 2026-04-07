@@ -77,14 +77,14 @@ POLICY_ARRAY=(
 	" Installing Bluetooth utility,install-blueutil,SMEDS3.png"
 	" Setting the time zone,set-timezone,SMEDS4.png"
 	" Installing Google Chrome,installChrome,SMEDS5.png"
-	" Installing and configuring Jamf Protect,jamfprotect,SMEDS6.png"
+	" Installing Jamf Protect,jamfprotect,SMEDS6.png"
 	" Installing Dock Utility,dockutil,SMEDS7.png"
-	" Configuring student dock,student-dock,SMEDS8.png"
+	" Configuring the dock,student-dock,SMEDS8.png"
 	" Generating enrollment receipt,enrollment-receipt,SMEDS9.png"
 	" Configuring the computer name,rename-username-stu,SMEDS10.png"
 	" Initiating name reset,reset-name,SMEDS11.png"
 	" Installing btenforce. Click ALLOW if prompted ⬆︎,install-btenforce,SMEDS12.png"
-	" Installing and configuring Lightspeed Filter Agent,install-lightspeed,fireworks800x200.png"
+	" Installing Lightspeed Filter,install-lightspeed,fireworks800x200.png"
 	" Preparing for the next login,uninstall-depnotify-installers,fireworks800x200.png"
 )
 
@@ -720,7 +720,7 @@ now=$( date +%FT%T )
 
 
 ## Add manual tasks to the top of the file.
-echo -e "Enrollment Type: "$ENROLLMENT_TYPE"\n" >> "$task_file"
+echo -e "Enrollment Type: "$ENROLLMENT_TYPE". Date: ${now}\n" >> "$task_file"
 echo -e "                       ╔════════════════════════╗ " >> "$task_file"
 echo -e "═══════════════════════╣ M A N U A L  T A S K S ╠════════════════════════" >> "$task_file"
 echo -e "                       ╚════════════════════════╝ \n" >> "$task_file"
@@ -760,7 +760,7 @@ for POLICY in "${POLICY_ARRAY[@]}"; do
 		fi
 	fi
 
-	echo "[✅]${desc}. Trigger: ${trigger}" >> "$task_file"
+	echo "[✅]${desc} | ${trigger}" >> "$task_file"
 	echo "Command: MainTextImage: "$PICS_FOLDER"/$(echo "$POLICY" | cut -d ',' -f3)" >> "$DEP_NOTIFY_LOG"
 	echo "Command: MainText: ${POLICY_ARRAY_TEXT} >> $DEP_NOTIFY_LOG"
 	echo "Status: $(echo "$POLICY" | cut -d ',' -f1)" >> "$DEP_NOTIFY_LOG"
@@ -780,6 +780,11 @@ token_status=$( dscl . -read /Users/hadmin AuthenticationAuthority | grep -o Sec
 timezone=$( date +"%Z %z" )
 
 echo "Status: Checking the enrollment..." >> "$DEP_NOTIFY_LOG"
+echo -e "\n\n" >> "$task_file"
+echo -e "                       ╔════════════════════════╗ " >> "$task_file"
+echo -e "═══════════════════════╣   ENROLLMENT CHECKS    ╠════════════════════════" >> "$task_file"
+echo -e "                       ╚════════════════════════╝ \n" >> "$task_file"
+
 
 # 1. Check that Chrome is installed and run the policy if it is not.
 if [[ ! -e "$chrome" ]]; then
@@ -904,7 +909,8 @@ seconds=$((SECONDS % 60))
 echo -e "➤ Execution time: ${minutes}m ${seconds}s" >> "$task_file"
 echo -e "➤ Local path for this file: ${task_file}" >> "$task_file"
 
-echo -e "\n\n══════════[EOF]══════════"
+echo -e "\n\n" >> "$task_file"
+echo -e "═════════════════════════════════════════════════════════════════════════"  >> "$task_file"
 
 # Remove the "Click ALLOW if prompted" line from the task file.
 sed -i '' 's/Click ALLOW if prompted ⬆︎//g' "$task_file"
