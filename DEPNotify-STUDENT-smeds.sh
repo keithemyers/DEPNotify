@@ -933,18 +933,18 @@ fi
 
 btenforce_status=$( launchctl list | grep itech | awk '{ print $3 }' )
 if [[ "$btenforce_status" == "com.itech.btenforce" ]]; then
-  echo "Status: ✅ Student Bluetooth enforcement is loaded." >> "$DEP_NOTIFY_LOG"
-  echo -e "[✅] Student Bluetooth enforcement is loaded." >> "$task_file"
+  echo "Status: ✅ Student Bluetooth enforcement is installed." >> "$DEP_NOTIFY_LOG"
+  echo -e "[✅] Student Bluetooth enforcement is installed." >> "$task_file"
 else
   "$JAMF_BINARY" policy -event install-btenforce
   sleep 2
   btenforce_status=$( launchctl list | grep itech | awk '{ print $3 }' )
   if [[ "$btenforce_status" == "com.itech.btenforce" ]]; then
-    echo "Status: ✅ Student Bluetooth enforcement is loaded." >> "$DEP_NOTIFY_LOG"
-    echo -e "[✅] Student Bluetooth enforcement is loaded after second try." >> "$task_file"
+    echo "Status: ✅ Student Bluetooth enforcement is installed." >> "$DEP_NOTIFY_LOG"
+    echo -e "[✅] Student Bluetooth enforcement is installed after second try." >> "$task_file"
   else
-    echo "Status: ❌ Student Bluetooth enforcement is NOT loaded." >> "$DEP_NOTIFY_LOG"
-    echo -e "[❌] Student Bluetooth enforcement is NOT loaded after second try." >> "$task_file"
+    echo "Status: ❌ Student Bluetooth enforcement is NOT installed." >> "$DEP_NOTIFY_LOG"
+    echo -e "[❌] Student Bluetooth enforcement is NOT installed after second try." >> "$task_file"
   fi
 fi
 
