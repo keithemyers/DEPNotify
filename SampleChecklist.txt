@@ -1,0 +1,56 @@
+Enrollment Type: STUDENT  |  Date: 2026-04-06T19:45:28
+
+                       ╔════════════════════════╗ 
+═══════════════════════╣ M A N U A L  T A S K S ╠════════════════════════
+                       ╚════════════════════════╝ 
+
+[ ] Log onto Chrome and create the student's profile
+[ ] Check content filtering by attempting to view a web page on the blocked list.
+[ ] Resolve any failed policies (any with a red X below).
+
+➤ Need to re-run one of the policies? Use: sudo jamf policy -event <event_trigger>
+➤ Example: sudo jamf policy -event set-timezone
+
+ ⬆︎ PLEASE COMPLETE THE ABOVE MANUAL TASKS.⬆︎ 
+
+                       ╔════════════════════════╗ 
+═══════════════════════╣  AUTOMATED ENROLLMENT  ╠════════════════════════
+                       ╚════════════════════════╝ 
+
+[✅] Assigning the computer            | assign-computer
+[✅] Configuring default interface     | set-dark-mode
+[✅] Installing swiftDialog            | install-swiftdialog
+[✅] Installing Bluetooth utility      | install-blueutil
+[✅] Setting the time zone             | set-timezone
+[✅] Installing Google Chrome          | installChrome
+[✅] Installing Jamf Protect           | jamfprotect
+[✅] Installing Dock Utility           | dockutil
+[✅] Configuring the dock              | student-dock
+[✅] Generating enrollment receipt     | enrollment-receipt
+[✅] Configuring the computer name     | rename-username-stu
+[✅] Initiating name reset             | reset-name
+[✅] Installing btenforce              | install-btenforce
+[✅] Installing Lightspeed Filter      | install-lightspeed
+[✅] Preparing for the next login      | uninstall-depnotify-installers
+
+
+
+                       ╔════════════════════════╗ 
+═══════════════════════╣   ENROLLMENT CHECKS    ╠════════════════════════
+                       ╚════════════════════════╝ 
+
+[✅] Google Chrome is installed.
+[✅] Timezone is set to EDT/EST
+[✅] swiftDialog is installed.
+[✅] Dockutil is installed.
+[✅] The computer is named correctly (STU-Mac-First.Last-L9VJXXXXXX).
+[⚠️] SecureToken is missing. Log on as hadmin via GUI, then log back on as will.murphy.
+
+➤ Process began:  2026-04-06 22:43:32
+➤ Completed:      2026-04-06 22:49:41
+➤ Execution time: 6m 8s
+➤ Local path for this file: /Users/will.murphy/.post-enrollment.txt
+
+
+
+═════════════════════════════════════════════════════════════════════════
