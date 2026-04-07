@@ -15,6 +15,7 @@
 # ══════════╣ GLOBAL VARIABLES ╠═══════════
 
 ENROLLMENT_TYPE="STUDENT"
+JAMF_PROTECT_TENANT="smeds.protect"
 FV_ENABLED=false
 
 START_DATE=$( TZ="America/New_York" date +"%Y-%m-%d %H:%M:%S" )
@@ -804,7 +805,7 @@ fi
 # 2. Check that the timezone is set to EDT/EST and run the policy if it is not.
 if [[ "$timezone" == "EDT -0400" || "$timezone" == "EST -0500" ]]; then
 	echo "Status: ✅ Timezone is set to EDT/EST" >> "$DEP_NOTIFY_LOG"
-	echo -e "[✅] Timezone is set to EDT/EST" >> "$task_file"
+	echo -e "[✅] Timezone is set to EDT/EST." >> "$task_file"
 else
 	"$JAMF_BINARY" policy -event set-timezone
 	if [[ "$timezone" == "EDT -0400" || "$timezone" == "EST -0500" ]]; then
@@ -892,6 +893,77 @@ if [[ "$WARN_SEC_TOKEN" = true ]]; then
   else
     echo "Status: ✅ Secure Token has been assigned to hadmin." >> "$DEP_NOTIFY_LOG"
     echo -e "[✅] Secure Token has been assigned to hadmin.\n" >> "$task_file"
+  fi
+fi
+
+lightspd_status=$( systemextensionsctl list | grep "lightspeed" | awk '{ print $9, $10 }' )
+if [[ "$lightspd_status" == "[activated enabled]" ]]; then
+  echo "Status: ✅ Lightspeed is enabled." >> "$DEP_NOTIFY_LOG"
+  echo -e "[✅] Lightspeed filter is enabled." >> "$task_file"
+else
+  "$JAMF_BINARY" policy -event install-lightspeed
+  sleep 2
+  lightspd_status=$( systemextensionsctl list | grep "lightspeed" | awk '{ print $9, $10 }' )
+  if [[ "$lightspd_status" == "[activated enabled]" ]]; then
+    echo "Status: ✅ Lightspeed is enabled." >> "$DEP_NOTIFY_LOG"
+    echo -e "[✅] Lightspeed filter is enabled." >> "$task_file"
+  else
+    echo "Status: ❌ Lightspeed is NOT enabled." >> "$DEP_NOTIFY_LOG"
+    echo -e "[❌] Lightspeed filter is NOT enabled after second try." >> "$task_file"
+  fi
+fi
+
+jprotect="/usr/local/bin/protectctl"
+jprotect_status=$( "$jprotect" info --plain | grep -i Tenant | awk '{ print $2 }' 2> /dev/null )
+if [[ "$jprotect_status" == "$JAMF_PROTECT_TENANT" ]]; then
+  echo "Status: ✅ Jamf Protect is enabled." >> "$DEP_NOTIFY_LOG"
+  echo -e "[✅] Jamf Protect is enabled." >> "$task_file"
+else
+  "$JAMF_BINARY" policy -event install-jprotect
+  sleep 2
+  jprotect_status=$( "$jprotect" info --plain | grep -i Tenant | awk '{ print $2 }' )
+  if [[ "$jprotect_status" == "[activated enabled]" ]]; then
+    echo "Status: ✅ Jamf Protect is enabled." >> "$DEP_NOTIFY_LOG"
+    echo -e "[✅] Jamf Protect is enabled after second try." >> "$task_file"
+  else
+    echo "Status: ❌ Jamf Protect is NOT enabled." >> "$DEP_NOTIFY_LOG"
+    echo -e "[❌] Jamf Protect is NOT enabled after second try." >> "$task_file"
+  fi
+fi
+
+btenforce_status=$( launchctl print system/com.itech.btenforce | grep 'last exit code' | awk '{ print $5 }' )
+if [[ "$btenforce_status" == "0" ]]; then
+  echo "Status: ✅ Student Bluetooth enforcement is enabled." >> "$DEP_NOTIFY_LOG"
+  echo -e "[✅] Student Bluetooth enforcement is enabled." >> "$task_file"
+else
+  "$JAMF_BINARY" policy -event install-btenforce
+  sleep 2
+  btenforce_status=$( launchctl print system/com.itech.btenforce | grep 'last exit code' | awk '{ print $5 }' )
+  if [[ "$btenforce_status" == "0" ]]; then
+    echo "Status: ✅ Student Bluetooth enforcement is enabled." >> "$DEP_NOTIFY_LOG"
+    echo -e "[✅] Student Bluetooth enforcement is enabled after second try." >> "$task_file"
+  else
+    echo "Status: ❌ Student Bluetooth enforcement is NOT enabled." >> "$DEP_NOTIFY_LOG"
+    echo -e "[❌] Student Bluetooth enforcement is NOT enabled after second try." >> "$task_file"
+  fi
+fi
+
+receipt_path="/usr/local/.receipt"
+receipt="${receipt_path}/receipt.txt"
+if [[ -f "$receipt" ]]; then
+    read rdate _ < "$receipt"
+    echo "Status: ✅ Enrollment receipt found: ${rdate}" >> "$DEP_NOTIFY_LOG"
+    echo -e "[✅] Enrollment receipt found: ${rdate}" >> "$task_file"
+else
+  "$JAMF_BINARY" policy -event enrollment-receipt
+  sleep 2
+  if [[ -f "$receipt" ]]; then
+    read rdate _ < "$receipt"
+    echo "Status: ✅ Enrollment receipt found: ${rdate}" >> "$DEP_NOTIFY_LOG"
+    echo -e "[✅] Enrollment receipt found: ${rdate}" >> "$task_file"
+  else
+    echo "Status: ❌ Enrollment receipt not found" >> "$DEP_NOTIFY_LOG"
+    echo -e "[❌] Enrollment receipt not found" >> "$task_file"
   fi
 fi
 
