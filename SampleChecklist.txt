@@ -49,7 +49,7 @@ Enrollment Type: STUDENT  |  Date: 2026-04-06T19:45:28
 ➤ Process began:  2026-04-06 22:43:32
 ➤ Completed:      2026-04-06 22:49:41
 ➤ Execution time: 6m 8s
-➤ Local path for this file: /Users/will.murphy/.post-enrollment.txt
+➤ Local path for this file: /Users/first.last/.post-enrollment.txt
 
 
 
