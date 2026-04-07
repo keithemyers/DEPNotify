@@ -71,21 +71,21 @@ TRIGGER="event"
 # ══════════╣ POLICY ARRAY ╠═══════════
 
 POLICY_ARRAY=(
-	" Assigning the computer,assign-computer,SMEDS1.png"
-	" Configuring default interface,set-dark-mode,SMEDS1.png"
-	" Installing swiftDialog,install-swiftdialog,SMEDS2.png"
-	" Installing Bluetooth utility,install-blueutil,SMEDS3.png"
-	" Setting the time zone,set-timezone,SMEDS4.png"
-	" Installing Google Chrome,installChrome,SMEDS5.png"
-	" Installing Jamf Protect,jamfprotect,SMEDS6.png"
-	" Installing Dock Utility,dockutil,SMEDS7.png"
-	" Configuring the dock,student-dock,SMEDS8.png"
-	" Generating enrollment receipt,enrollment-receipt,SMEDS9.png"
-	" Configuring the computer name,rename-username-stu,SMEDS10.png"
-	" Initiating name reset,reset-name,SMEDS11.png"
-	" Installing btenforce. Click ALLOW if prompted ⬆︎,install-btenforce,SMEDS12.png"
-	" Installing Lightspeed Filter,install-lightspeed,fireworks800x200.png"
-	" Preparing for the next login,uninstall-depnotify-installers,fireworks800x200.png"
+	" Assigning the computer           ,assign-computer,SMEDS1.png"
+	" Configuring default interface    ,set-dark-mode,SMEDS1.png"
+	" Installing swiftDialog           ,install-swiftdialog,SMEDS2.png"
+	" Installing Bluetooth utility     ,install-blueutil,SMEDS3.png"
+	" Setting the time zone            ,set-timezone,SMEDS4.png"
+	" Installing Google Chrome         ,installChrome,SMEDS5.png"
+	" Installing Jamf Protect          ,jamfprotect,SMEDS6.png"
+	" Installing Dock Utility          ,dockutil,SMEDS7.png"
+	" Configuring the dock             ,student-dock,SMEDS8.png"
+	" Generating enrollment receipt    ,enrollment-receipt,SMEDS9.png"
+	" Configuring the computer name    ,rename-username-stu,SMEDS10.png"
+	" Initiating name reset            ,reset-name,SMEDS11.png"
+	" Installing btenforce             ,install-btenforce,SMEDS12.png"
+	" Installing Lightspeed Filter     ,install-lightspeed,fireworks800x200.png"
+	" Preparing for the next login     ,uninstall-depnotify-installers,fireworks800x200.png"
 )
 
 
@@ -720,7 +720,7 @@ now=$( date +%FT%T )
 
 
 ## Add manual tasks to the top of the file.
-echo -e "Enrollment Type: "$ENROLLMENT_TYPE". Date: ${now}\n" >> "$task_file"
+echo -e "Enrollment Type: "$ENROLLMENT_TYPE"  |  Date: ${now}\n" >> "$task_file"
 echo -e "                       ╔════════════════════════╗ " >> "$task_file"
 echo -e "═══════════════════════╣ M A N U A L  T A S K S ╠════════════════════════" >> "$task_file"
 echo -e "                       ╚════════════════════════╝ \n" >> "$task_file"
@@ -892,8 +892,8 @@ else
 	echo -e "[✅] Secure Token has been assigned to hadmin.\n" >> "$task_file"
 fi
 
-echo "Status: Generating checklist..." >> "$DEP_NOTIFY_LOG"
-
+echo "Status: Generating checklist. Restarting the computer in 5 seconds..." >> "$DEP_NOTIFY_LOG"
+sleep 5
 
 # Calculate the time difference in mins and seconds.
 END_DATE=$( date +"%Y-%m-%d %H:%M:%S" )
