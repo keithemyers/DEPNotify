@@ -42,6 +42,7 @@ COMPLETE_ALERT_TEXT="Initial setup and configuration is complete. The computer w
 COMPLETE_MAIN_TEXT='Initial setup and configuration is complete. The computer will now reboot.'
 COMPLETE_BUTTON_TEXT="Initiating restart..."
 PICS_FOLDER=/usr/local/pics/
+WARN_SEC_TOKEN=false
 
 # Alert settings. To be used if any of the policies require user attention.
 ALERT_ENABLED=false
@@ -882,14 +883,16 @@ else
 fi
 unsetopt NO_CASE_MATCH
 
-# 7. Check that the SecureToken for hadmin is present and run the policy if it is not.
-token_status=$( dscl . -read /Users/hadmin AuthenticationAuthority | grep -o SecureToken )
-if [[ -z $token_status ]]; then
-	echo -e "[⚠️] SecureToken is missing. Log on as hadmin via GUI, then log back on as ${CURRENT_USER}.\n" >> "$task_file"
-	echo "Status: ⚠️ Unable to obtain a SecureToken for hadmin." >> "$DEP_NOTIFY_LOG"
-else
-	echo "Status: ✅ Secure Token has been assigned to hadmin." >> "$DEP_NOTIFY_LOG"
-	echo -e "[✅] Secure Token has been assigned to hadmin.\n" >> "$task_file"
+if [[ "$WARN_SEC_TOKEN" = true ]]; then
+  # 7. Check that the SecureToken for hadmin is present and run the policy if it is not.
+  token_status=$( dscl . -read /Users/hadmin AuthenticationAuthority | grep -o SecureToken )
+  if [[ -z $token_status ]]; then
+    echo -e "[⚠️] SecureToken is missing. Log on as hadmin via GUI, then log back on as ${CURRENT_USER}.\n" >> "$task_file"
+    echo "Status: ⚠️ Unable to obtain a SecureToken for hadmin." >> "$DEP_NOTIFY_LOG"
+  else
+    echo "Status: ✅ Secure Token has been assigned to hadmin." >> "$DEP_NOTIFY_LOG"
+    echo -e "[✅] Secure Token has been assigned to hadmin.\n" >> "$task_file"
+  fi
 fi
 
 echo "Status: Generating checklist. Restarting the computer in 5 seconds..." >> "$DEP_NOTIFY_LOG"
