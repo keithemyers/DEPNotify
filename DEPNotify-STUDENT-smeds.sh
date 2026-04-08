@@ -17,6 +17,7 @@
 ENROLLMENT_TYPE="STUDENT"
 JAMF_PROTECT_TENANT="smeds.protect"
 FV_ENABLED=false
+BTENFORCE=false
 
 START_DATE=$( TZ="America/New_York" date +"%Y-%m-%d %H:%M:%S" )
 SECONDS=0
@@ -86,6 +87,7 @@ POLICY_ARRAY=(
 	" Configuring the computer name    ,rename-username-stu,SMEDS10.png"
 	" Initiating name reset            ,reset-name,SMEDS11.png"
 	" Installing btenforce             ,install-btenforce,SMEDS12.png"
+  " Setting default browser          ,install-default-browser,SMEDS13.png"
 	" Installing Lightspeed Filter     ,install-lightspeed,fireworks800x200.png"
 	" Preparing for the next login     ,uninstall-depnotify-installers,fireworks800x200.png"
 )
@@ -905,7 +907,7 @@ else
   sleep 2
   lightspd_status=$( systemextensionsctl list | grep "lightspeed" | awk '{ print $9, $10 }' )
   if [[ "$lightspd_status" == "[activated enabled]" ]]; then
-    echo "Status: ✅ Lightspeed is enabled." >> "$DEP_NOTIFY_LOG"
+    echo "Status: ✅ Lightspeed is enabled. Please test it " >> "$DEP_NOTIFY_LOG"
     echo -e "[✅] Lightspeed filter is enabled." >> "$task_file"
   else
     echo "Status: ❌ Lightspeed is NOT enabled." >> "$DEP_NOTIFY_LOG"
@@ -931,20 +933,22 @@ else
   fi
 fi
 
-btenforce_status=$( launchctl list | grep itech | awk '{ print $3 }' )
-if [[ "$btenforce_status" == "com.itech.btenforce" ]]; then
-  echo "Status: ✅ Student Bluetooth enforcement is installed." >> "$DEP_NOTIFY_LOG"
-  echo -e "[✅] Student Bluetooth enforcement is installed." >> "$task_file"
-else
-  "$JAMF_BINARY" policy -event install-btenforce
-  sleep 2
+if [[ "$BTENFORCE" = true ]]; then
   btenforce_status=$( launchctl list | grep itech | awk '{ print $3 }' )
   if [[ "$btenforce_status" == "com.itech.btenforce" ]]; then
     echo "Status: ✅ Student Bluetooth enforcement is installed." >> "$DEP_NOTIFY_LOG"
-    echo -e "[✅] Student Bluetooth enforcement is installed after second try." >> "$task_file"
+    echo -e "[✅] Student Bluetooth enforcement is installed." >> "$task_file"
   else
-    echo "Status: ❌ Student Bluetooth enforcement is NOT installed." >> "$DEP_NOTIFY_LOG"
-    echo -e "[❌] Student Bluetooth enforcement is NOT installed after second try." >> "$task_file"
+    "$JAMF_BINARY" policy -event install-btenforce
+    sleep 2
+    btenforce_status=$( launchctl list | grep itech | awk '{ print $3 }' )
+    if [[ "$btenforce_status" == "com.itech.btenforce" ]]; then
+      echo "Status: ✅ Student Bluetooth enforcement is installed." >> "$DEP_NOTIFY_LOG"
+      echo -e "[✅] Student Bluetooth enforcement is installed after second try." >> "$task_file"
+    else
+      echo "Status: ❌ Student Bluetooth enforcement is NOT installed." >> "$DEP_NOTIFY_LOG"
+      echo -e "[❌] Student Bluetooth enforcement is NOT installed after second try." >> "$task_file"
+    fi
   fi
 fi
 
