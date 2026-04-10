@@ -76,7 +76,7 @@ TRIGGER="event"
 POLICY_ARRAY=(
 	" Assigning the computer           ,assign-computer,SMEDS1.png"
 	" Configuring default interface    ,set-dark-mode,SMEDS1.png"
-	" Installing swiftDialog           ,install-swiftdialog,SMEDS2.png"
+	" Installing swiftDialog           ,install-dialog,SMEDS2.png"
 	" Installing Bluetooth utility     ,install-blueutil,SMEDS3.png"
 	" Setting the time zone            ,set-timezone,SMEDS4.png"
 	" Installing Google Chrome         ,installChrome,SMEDS5.png"
@@ -924,7 +924,7 @@ else
   "$JAMF_BINARY" policy -event install-jprotect
   sleep 2
   jprotect_status=$( "$jprotect" info --plain | grep -i Tenant | awk '{ print $2 }' )
-  if [[ "$jprotect_status" == "[activated enabled]" ]]; then
+  if [[ "$jprotect_status" == "$JAMF_PROTECT_TENANT" ]]; then
     echo "Status: ✅ Jamf Protect is enabled." >> "$DEP_NOTIFY_LOG"
     echo -e "[✅] Jamf Protect is enabled after second try." >> "$task_file"
   else
